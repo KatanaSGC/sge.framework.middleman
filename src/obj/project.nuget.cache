@@ -1,8 +1,8 @@
 {
   "version": 2,
-  "dgSpecHash": "VM7GGJ5z2n28RFWN6MtSR3YTLqlQDbOf83wqoy5m+mtK0O17V8DMhbjeL/kJcK5YfNoJjcnoyOijElB708wQtA==",
+  "dgSpecHash": "Hd7sIsVK7H5C58B0DCKe9IzF/ft7kzgvJEgPi0wOmeHF0VJVftTfM9gJbVOBSLkLbwvHYV1a+/20r65krLlGIg==",
   "success": true,
-  "projectFilePath": "/home/agonzalez/Proyectos/sge.framework.middleman/sge.framework.middleman/sge.framework.middleman.csproj",
+  "projectFilePath": "/home/agonzalez/Proyectos/sge.framework.middleman/src/src.csproj",
   "expectedPackageFiles": [],
   "logs": []
 }

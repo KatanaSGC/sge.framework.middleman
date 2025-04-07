@@ -1,0 +1,12 @@
+/home/agonzalez/Proyectos/sge.framework.middleman/sge.framework.middleman/bin/Release/net8.0/sge.framework.middleman.deps.json
+/home/agonzalez/Proyectos/sge.framework.middleman/sge.framework.middleman/bin/Release/net8.0/sge.framework.middleman.dll
+/home/agonzalez/Proyectos/sge.framework.middleman/sge.framework.middleman/bin/Release/net8.0/sge.framework.middleman.pdb
+/home/agonzalez/Proyectos/sge.framework.middleman/sge.framework.middleman/obj/Release/net8.0/sge.framework.middleman.GeneratedMSBuildEditorConfig.editorconfig
+/home/agonzalez/Proyectos/sge.framework.middleman/sge.framework.middleman/obj/Release/net8.0/sge.framework.middleman.AssemblyInfoInputs.cache
+/home/agonzalez/Proyectos/sge.framework.middleman/sge.framework.middleman/obj/Release/net8.0/sge.framework.middleman.AssemblyInfo.cs
+/home/agonzalez/Proyectos/sge.framework.middleman/sge.framework.middleman/obj/Release/net8.0/sge.framework.middleman.csproj.CoreCompileInputs.cache
+/home/agonzalez/Proyectos/sge.framework.middleman/sge.framework.middleman/obj/Release/net8.0/sge.framework.middleman.sourcelink.json
+/home/agonzalez/Proyectos/sge.framework.middleman/sge.framework.middleman/obj/Release/net8.0/sge.framework.middleman.dll
+/home/agonzalez/Proyectos/sge.framework.middleman/sge.framework.middleman/obj/Release/net8.0/refint/sge.framework.middleman.dll
+/home/agonzalez/Proyectos/sge.framework.middleman/sge.framework.middleman/obj/Release/net8.0/sge.framework.middleman.pdb
+/home/agonzalez/Proyectos/sge.framework.middleman/sge.framework.middleman/obj/Release/net8.0/ref/sge.framework.middleman.dll

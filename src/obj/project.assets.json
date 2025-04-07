@@ -11,13 +11,13 @@
     "/home/agonzalez/.nuget/packages/": {}
   },
   "project": {
-    "version": "1.0.1",
+    "version": "1.0.3",
     "restore": {
-      "projectUniqueName": "/home/agonzalez/Proyectos/sge.framework.middleman/sge.framework.middleman/sge.framework.middleman.csproj",
-      "projectName": "sge.framework.middleman",
-      "projectPath": "/home/agonzalez/Proyectos/sge.framework.middleman/sge.framework.middleman/sge.framework.middleman.csproj",
+      "projectUniqueName": "/home/agonzalez/Proyectos/sge.framework.middleman/src/src.csproj",
+      "projectName": "Sge.Framework.Middleman",
+      "projectPath": "/home/agonzalez/Proyectos/sge.framework.middleman/src/src.csproj",
       "packagesPath": "/home/agonzalez/.nuget/packages/",
-      "outputPath": "/home/agonzalez/Proyectos/sge.framework.middleman/sge.framework.middleman/obj/",
+      "outputPath": "/home/agonzalez/Proyectos/sge.framework.middleman/src/obj/",
       "projectStyle": "PackageReference",
       "configFilePaths": [
         "/home/agonzalez/.nuget/NuGet/NuGet.Config"

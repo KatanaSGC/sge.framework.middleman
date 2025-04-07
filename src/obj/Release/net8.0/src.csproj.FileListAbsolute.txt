@@ -1,0 +1,12 @@
+/home/agonzalez/Proyectos/sge.framework.middleman/src/bin/Release/net8.0/src.deps.json
+/home/agonzalez/Proyectos/sge.framework.middleman/src/bin/Release/net8.0/src.dll
+/home/agonzalez/Proyectos/sge.framework.middleman/src/bin/Release/net8.0/src.pdb
+/home/agonzalez/Proyectos/sge.framework.middleman/src/obj/Release/net8.0/src.GeneratedMSBuildEditorConfig.editorconfig
+/home/agonzalez/Proyectos/sge.framework.middleman/src/obj/Release/net8.0/src.AssemblyInfoInputs.cache
+/home/agonzalez/Proyectos/sge.framework.middleman/src/obj/Release/net8.0/src.AssemblyInfo.cs
+/home/agonzalez/Proyectos/sge.framework.middleman/src/obj/Release/net8.0/src.csproj.CoreCompileInputs.cache
+/home/agonzalez/Proyectos/sge.framework.middleman/src/obj/Release/net8.0/src.sourcelink.json
+/home/agonzalez/Proyectos/sge.framework.middleman/src/obj/Release/net8.0/src.dll
+/home/agonzalez/Proyectos/sge.framework.middleman/src/obj/Release/net8.0/refint/src.dll
+/home/agonzalez/Proyectos/sge.framework.middleman/src/obj/Release/net8.0/src.pdb
+/home/agonzalez/Proyectos/sge.framework.middleman/src/obj/Release/net8.0/ref/src.dll

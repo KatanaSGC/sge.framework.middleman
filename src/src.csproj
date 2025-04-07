@@ -4,8 +4,8 @@
         <TargetFramework>net8.0</TargetFramework>
         <ImplicitUsings>enable</ImplicitUsings>
         <Nullable>enable</Nullable>
-        <PackageId>src</PackageId>
-        <Version>1.0.1</Version>
+        <PackageId>Sge.Framework.Middleman</PackageId>
+        <Version>1.0.3</Version>
         <Authors>KatanaSGC</Authors>
         <Description>This package is an implementation of the mediator pattern.</Description>
         <PackageLicenseExpression>MIT</PackageLicenseExpression>
@@ -13,6 +13,7 @@
         <RepositoryUrl>https://github.com/KatanaSGC/sge.framework.middleman</RepositoryUrl>
         <RepositoryType>git</RepositoryType>
         <RootNamespace>sge.framework.middleman</RootNamespace>
+        <PackageTitle>SGE.Framework.Middleman</PackageTitle>
     </PropertyGroup>
 
 </Project>
