@@ -11,7 +11,7 @@
     "/home/agonzalez/.nuget/packages/": {}
   },
   "project": {
-    "version": "1.0.0",
+    "version": "1.0.1",
     "restore": {
       "projectUniqueName": "/home/agonzalez/Proyectos/sge.framework.middleman/sge.framework.middleman/sge.framework.middleman.csproj",
       "projectName": "sge.framework.middleman",

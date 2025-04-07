@@ -1,0 +1,18 @@
+﻿<Project Sdk="Microsoft.NET.Sdk">
+
+    <PropertyGroup>
+        <TargetFramework>net8.0</TargetFramework>
+        <ImplicitUsings>enable</ImplicitUsings>
+        <Nullable>enable</Nullable>
+        <PackageId>src</PackageId>
+        <Version>1.0.1</Version>
+        <Authors>KatanaSGC</Authors>
+        <Description>This package is an implementation of the mediator pattern.</Description>
+        <PackageLicenseExpression>MIT</PackageLicenseExpression>
+        <PackageProjectUrl>https://github.com/KatanaSGC/sge.framework.middleman</PackageProjectUrl>
+        <RepositoryUrl>https://github.com/KatanaSGC/sge.framework.middleman</RepositoryUrl>
+        <RepositoryType>git</RepositoryType>
+        <RootNamespace>sge.framework.middleman</RootNamespace>
+    </PropertyGroup>
+
+</Project>
