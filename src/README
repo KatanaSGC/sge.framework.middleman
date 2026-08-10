@@ -1,0 +1,61 @@
+## QuantiveCorp.Framework.Middleman 
+
+This project is an implementation of the mediator pattern.
+
+# Configure in Program.cs
+
+```csharp
+using sge.framework.middleman
+builder.Services.AddMiddlemanConfig();
+```
+
+# Usage
+
+1. Create a command class that implements `IMiddlemanRequest<TResponse>` and a handler class that implements `IMiddlemanRequestHandler<TRequest, TResponse>`.
+```csharp
+using sge.framework.middleman;
+
+public class MyCommand : IMiddlemanRequest<TResponse>
+{
+    // Properties
+}
+```
+2. Create a handler class that implements `IMiddlemanRequestHandler<TRequest, TResponse>`.
+
+```csharp
+public class MyCommandHandler : IMiddlemanRequestHandler<MyCommand, TResponse>
+{
+    public Task<TResponse> Handle(MyCommand request, CancellationToken cancellationToken)
+    {
+        // Handle the command
+    }
+}
+```
+
+3. Call the command from your controller or service using the `IMediator` interface.
+```csharp
+using sge.framework.middleman;
+
+public class YourController : ControllerBase
+{
+    private readonly IMiddlemanSender middlemanSender;
+
+    public YourController(IMiddlemanSender middlemanSender)
+    {
+        this.middlemanSender = middlemanSender;
+    }
+
+    [HttpPost]
+    public async Task<IActionResult> Create([FromBody] MyCommand command)
+    {
+        var response = await middlemanSender.Send(command);
+        return Ok(response);
+    }
+}
+```
+
+If you have any suggestions, please feel free to contact me.
+
+agm.sge@outlook.com
+
+or create an issue on GitHub.

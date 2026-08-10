@@ -1,8 +1,12 @@
 {
   "version": 2,
-  "dgSpecHash": "Hd7sIsVK7H5C58B0DCKe9IzF/ft7kzgvJEgPi0wOmeHF0VJVftTfM9gJbVOBSLkLbwvHYV1a+/20r65krLlGIg==",
+  "dgSpecHash": "KX/OJzGBuyA=",
   "success": true,
-  "projectFilePath": "/home/agonzalez/Proyectos/sge.framework.middleman/src/src.csproj",
-  "expectedPackageFiles": [],
+  "projectFilePath": "/run/media/agustingonzalez/Respaldo/RiderProjects/sge.framework.middleman/src/src.csproj",
+  "expectedPackageFiles": [
+    "/var/home/agustingonzalez/.nuget/packages/microsoft.extensions.dependencyinjection.abstractions/10.0.1/microsoft.extensions.dependencyinjection.abstractions.10.0.1.nupkg.sha512",
+    "/var/home/agustingonzalez/.nuget/packages/microsoft.netcore.app.ref/9.0.18/microsoft.netcore.app.ref.9.0.18.nupkg.sha512",
+    "/var/home/agustingonzalez/.nuget/packages/microsoft.aspnetcore.app.ref/9.0.18/microsoft.aspnetcore.app.ref.9.0.18.nupkg.sha512"
+  ],
   "logs": []
 }

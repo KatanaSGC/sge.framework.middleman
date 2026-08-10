@@ -1,0 +1,23 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<package xmlns="http://schemas.microsoft.com/packaging/2012/06/nuspec.xsd">
+  <metadata>
+    <id>QuantiveCorp.Framework.Middleman</id>
+    <version>1.0.3</version>
+    <authors>KatanaSGC</authors>
+    <license type="expression">MIT</license>
+    <licenseUrl>https://licenses.nuget.org/MIT</licenseUrl>
+    <projectUrl>https://github.com/KatanaSGC/sge.framework.middleman</projectUrl>
+    <description>This package is an implementation of the mediator pattern.</description>
+    <repository type="git" url="https://github.com/KatanaSGC/sge.framework.middleman" commit="5ad9f6527e625140f13316a119b9113ebd8b7853" />
+    <dependencies>
+      <group targetFramework="net8.0" />
+      <group targetFramework="net9.0" />
+      <group targetFramework="net10.0" />
+    </dependencies>
+  </metadata>
+  <files>
+    <file src="/home/agustingonzalez/RiderProjects/sge.framework.middleman/src/bin/Release/net10.0/src.dll" target="lib/net10.0/src.dll" />
+    <file src="/home/agustingonzalez/RiderProjects/sge.framework.middleman/src/bin/Release/net8.0/src.dll" target="lib/net8.0/src.dll" />
+    <file src="/home/agustingonzalez/RiderProjects/sge.framework.middleman/src/bin/Release/net9.0/src.dll" target="lib/net9.0/src.dll" />
+  </files>
+</package>

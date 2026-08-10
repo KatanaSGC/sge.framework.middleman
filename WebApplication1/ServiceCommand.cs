@@ -1,7 +1,9 @@
+using sge.framework.middleman;
+
 namespace WebApplication1;
 
 
-public class Service
+public class ServiceCommand : IMiddlemanRequest<bool>
 {
     
 }
