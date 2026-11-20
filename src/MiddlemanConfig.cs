@@ -23,6 +23,26 @@ public static class MiddlemanConfig
                 services.AddTransient(serviceType, implementationType);
         }
 
+        var behaviorInterfaceType = typeof(IMiddlemanPipelineBehavior<,>);
+        var behaviorTypes = AppDomain.CurrentDomain.GetAssemblies()
+            .SelectMany(a => a.GetTypes())
+            .Where(t => t.IsClass && !t.IsAbstract)
+            .ToList();
+
+        foreach (var behaviorType in behaviorTypes)
+        {
+            var interfaces = behaviorType.GetInterfaces()
+                .Where(i => i.IsGenericType && i.GetGenericTypeDefinition() == behaviorInterfaceType);
+
+            foreach (var serviceType in interfaces)
+            {
+                if (behaviorType.IsGenericTypeDefinition)
+                    services.AddTransient(behaviorInterfaceType, behaviorType);
+                else
+                    services.AddTransient(serviceType, behaviorType);
+            }
+        }
+
         return services;
     }
 }

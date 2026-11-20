@@ -4,7 +4,7 @@ namespace WebApplication1;
 
 public class ServiceHandler : IMiddlemanHandler<ServiceCommand, bool>
 {
-    public async Task<bool> Handle(ServiceCommand request)
+    public async Task<bool> Handle(ServiceCommand request, CancellationToken cancellationToken)
     {
         throw new NotImplementedException();
     }

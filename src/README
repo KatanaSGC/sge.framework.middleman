@@ -1,61 +1,333 @@
-## QuantiveCorp.Framework.Middleman 
+# QuantiveCorp.Framework.Middleman
 
-This project is an implementation of the mediator pattern.
+`QuantiveCorp.Framework.Middleman` es una biblioteca pequeña para implementar el patrón **mediator** en aplicaciones .NET. Permite enviar una solicitud a través de `IMiddlemanSender` y delegar su ejecución al handler registrado para el tipo concreto de solicitud.
 
-# Configure in Program.cs
+La biblioteca no impone una separación entre comandos y consultas: ambos se modelan como solicitudes que producen una respuesta. Incluye propagación de `CancellationToken` y pipeline behaviors; no proporciona notificaciones ni streaming.
+
+## Contenido
+
+- [Requisitos e instalación](#requisitos-e-instalación)
+- [Registro y configuración](#registro-y-configuración)
+- [Crear una solicitud](#crear-una-solicitud)
+- [Crear el handler](#crear-el-handler)
+- [Enviar una solicitud](#enviar-una-solicitud)
+- [Ejemplo completo en ASP.NET Core](#ejemplo-completo-en-aspnet-core)
+- [Uso desde otros servicios](#uso-desde-otros-servicios)
+- [CancellationToken](#cancellationtoken)
+- [Pipeline behaviors](#pipeline-behaviors)
+- [Resolución de handlers y ciclo de vida](#resolución-de-handlers-y-ciclo-de-vida)
+- [Errores y recomendaciones](#errores-y-recomendaciones)
+- [API pública](#api-pública)
+- [Limitaciones conocidas](#limitaciones-conocidas)
+
+## Requisitos e instalación
+
+El proyecto publica el paquete NuGet `QuantiveCorp.Framework.Middleman` versión `2.0.0` y compila para `net8.0`, `net9.0` y `net10.0`.
+
+Instálalo en la aplicación que contiene las solicitudes y sus handlers:
+
+```bash
+dotnet add package QuantiveCorp.Framework.Middleman
+```
+
+También se puede agregar directamente al archivo `.csproj`:
+
+```xml
+<ItemGroup>
+  <PackageReference Include="QuantiveCorp.Framework.Middleman" Version="2.0.0" />
+</ItemGroup>
+```
+
+Los ejemplos usan el espacio de nombres:
 
 ```csharp
-using sge.framework.middleman
+using sge.framework.middleman;
+```
+
+## Registro y configuración
+
+Registra el servicio una vez durante el arranque, antes de construir la aplicación:
+
+```csharp
+using sge.framework.middleman;
+
+var builder = WebApplication.CreateBuilder(args);
+
 builder.Services.AddMiddlemanConfig();
+
+var app = builder.Build();
+app.Run();
 ```
 
-# Usage
+`AddMiddlemanConfig()` registra `IMiddlemanSender` y busca en los ensamblados que ya están cargados en el proceso clases concretas que implementen `IMiddlemanHandler<TRequest, TResponse>`. Cada handler encontrado se registra en el contenedor de inyección de dependencias.
 
-1. Create a command class that implements `IMiddlemanRequest<TResponse>` and a handler class that implements `IMiddlemanRequestHandler<TRequest, TResponse>`.
+No se necesita una sección de `appsettings.json` ni una configuración adicional para el funcionamiento básico. El método de registro no recibe un ensamblado ni un tipo de handler como parámetro; por eso, los ensamblados que contengan handlers deben estar cargados cuando se invoque. En una aplicación habitual, define los handlers en el proyecto de inicio o en dependencias que se cargan durante el arranque y llama al método desde `Program.cs`.
+
+## Crear una solicitud
+
+Una solicitud implementa `IMiddlemanRequest<TResponse>`. El tipo genérico representa el tipo de dato que devolverá su handler:
+
 ```csharp
 using sge.framework.middleman;
 
-public class MyCommand : IMiddlemanRequest<TResponse>
+public sealed class ObtenerSaludo : IMiddlemanRequest<string>
 {
-    // Properties
+    public ObtenerSaludo(string nombre)
+    {
+        Nombre = nombre;
+    }
+
+    public string Nombre { get; }
 }
 ```
-2. Create a handler class that implements `IMiddlemanRequestHandler<TRequest, TResponse>`.
+
+La interfaz no exige propiedades ni métodos. Agrega los datos de entrada que necesite el handler. Es recomendable que la solicitud sea inmutable una vez creada.
+
+Para una operación que no devuelve información de negocio, la API igualmente requiere un tipo de respuesta. Puedes usar, por ejemplo, `bool` o definir un tipo de resultado propio:
 
 ```csharp
-public class MyCommandHandler : IMiddlemanRequestHandler<MyCommand, TResponse>
-{
-    public Task<TResponse> Handle(MyCommand request, CancellationToken cancellationToken)
-    {
-        // Handle the command
-    }
-}
+public sealed record CrearOrdenResultado(int OrdenId);
+
+public sealed record CrearOrden(int ClienteId)
+    : IMiddlemanRequest<CrearOrdenResultado>;
 ```
 
-3. Call the command from your controller or service using the `IMediator` interface.
+## Crear el handler
+
+Implementa `IMiddlemanHandler<TRequest, TResponse>` con los mismos tipos de solicitud y respuesta:
+
 ```csharp
 using sge.framework.middleman;
 
-public class YourController : ControllerBase
+public sealed class ObtenerSaludoHandler
+    : IMiddlemanHandler<ObtenerSaludo, string>
 {
-    private readonly IMiddlemanSender middlemanSender;
-
-    public YourController(IMiddlemanSender middlemanSender)
+    public Task<string> Handle(ObtenerSaludo request, CancellationToken cancellationToken)
     {
-        this.middlemanSender = middlemanSender;
-    }
-
-    [HttpPost]
-    public async Task<IActionResult> Create([FromBody] MyCommand command)
-    {
-        var response = await middlemanSender.Send(command);
-        return Ok(response);
+        var saludo = $"Hola, {request.Nombre}.";
+        return Task.FromResult(saludo);
     }
 }
 ```
 
-If you have any suggestions, please feel free to contact me.
+`Handle` devuelve `Task<TResponse>` y recibe la solicitud y un `CancellationToken`. Si la implementación realiza operaciones asíncronas, puede declararse con `async` y usar `await`:
 
-agm.sge@outlook.com
+```csharp
+public async Task<CrearOrdenResultado> Handle(CrearOrden request, CancellationToken cancellationToken)
+{
+    var ordenId = await GuardarOrdenAsync(request.ClienteId, cancellationToken);
+    return new CrearOrdenResultado(ordenId);
+}
+```
 
-or create an issue on GitHub.
+El ejemplo anterior asume que `GuardarOrdenAsync` existe en el servicio o dependencia que utilice el handler. El paquete no define acceso a datos ni operaciones de dominio.
+
+## Enviar una solicitud
+
+Inyecta `IMiddlemanSender` en un controlador, servicio u otro componente creado por DI y llama a `Send`:
+
+```csharp
+public sealed class SaludosService(IMiddlemanSender sender)
+{
+    public Task<string> ObtenerAsync(string nombre)
+    {
+        return sender.Send(new ObtenerSaludo(nombre));
+    }
+}
+```
+
+También puedes esperar el resultado directamente:
+
+```csharp
+var saludo = await sender.Send(new ObtenerSaludo("Ada"));
+```
+
+El tipo de respuesta de `Send` se infiere de `IMiddlemanRequest<TResponse>`. El sender busca el handler usando el tipo concreto en tiempo de ejecución de la solicitud y el tipo de respuesta genérico.
+
+## Ejemplo completo en ASP.NET Core
+
+Las clases siguientes pueden vivir en el proyecto de la aplicación o en una dependencia cargada durante el inicio.
+
+```csharp
+using sge.framework.middleman;
+
+public sealed record ObtenerSaludo(string Nombre)
+    : IMiddlemanRequest<string>;
+
+public sealed class ObtenerSaludoHandler
+    : IMiddlemanHandler<ObtenerSaludo, string>
+{
+    public Task<string> Handle(ObtenerSaludo request, CancellationToken cancellationToken)
+    {
+        return Task.FromResult($"Hola, {request.Nombre}.");
+    }
+}
+```
+
+En `Program.cs`, registra la biblioteca y los controladores:
+
+```csharp
+using sge.framework.middleman;
+
+var builder = WebApplication.CreateBuilder(args);
+
+builder.Services.AddMiddlemanConfig();
+builder.Services.AddControllers();
+
+var app = builder.Build();
+
+app.MapControllers();
+app.Run();
+```
+
+Un controlador puede enviar la solicitud y devolver la respuesta:
+
+```csharp
+using Microsoft.AspNetCore.Mvc;
+using sge.framework.middleman;
+
+[ApiController]
+[Route("api/[controller]")]
+public sealed class SaludosController(IMiddlemanSender sender) : ControllerBase
+{
+    [HttpGet("{nombre}")]
+    public async Task<ActionResult<string>> Obtener(string nombre, CancellationToken cancellationToken)
+    {
+        var saludo = await sender.Send(new ObtenerSaludo(nombre), cancellationToken);
+        return Ok(saludo);
+    }
+}
+```
+
+Una solicitud y su handler deben coincidir exactamente en los tipos genéricos. En el ejemplo, la relación es `ObtenerSaludo` → `string`.
+
+## Uso desde otros servicios
+
+El sender no está limitado a controladores. Cualquier servicio registrado en el mismo contenedor puede recibir `IMiddlemanSender` por constructor:
+
+```csharp
+public sealed class ProcesoDeRegistro(IMiddlemanSender sender)
+{
+    public async Task EjecutarAsync(int clienteId)
+    {
+        var resultado = await sender.Send(new CrearOrden(clienteId));
+        Console.WriteLine($"Orden creada: {resultado.OrdenId}");
+    }
+}
+```
+
+Registra también el servicio de aplicación si no lo registra ya otro mecanismo:
+
+```csharp
+builder.Services.AddTransient<ProcesoDeRegistro>();
+```
+
+## CancellationToken
+
+`Send` acepta un `CancellationToken` opcional (`default` si se omite) que se entrega sin cambios a todos los behaviors y al handler. La cancelación es cooperativa: el handler debe pasar el token a las operaciones asíncronas que invoque o llamar a `cancellationToken.ThrowIfCancellationRequested()`.
+
+```csharp
+// En ASP.NET Core, el token de la acción se cancela si el cliente se desconecta.
+var resultado = await sender.Send(new CrearOrden(clienteId), cancellationToken);
+```
+
+Si el token ya está cancelado, el comportamiento depende de cada behavior y del handler: el sender no lo comprueba por sí mismo. Una cancelación efectiva se propaga normalmente como `OperationCanceledException`.
+
+## Pipeline behaviors
+
+Un behavior envuelve la ejecución del handler y permite ejecutar lógica antes y después: logging, validación, métricas, transacciones, caché, etc. Implementa `IMiddlemanPipelineBehavior<TRequest, TResponse>`:
+
+```csharp
+using sge.framework.middleman;
+
+public sealed class LoggingBehavior<TRequest, TResponse>(ILogger<LoggingBehavior<TRequest, TResponse>> logger)
+    : IMiddlemanPipelineBehavior<TRequest, TResponse>
+{
+    public async Task<TResponse> Handle(
+        TRequest request,
+        MiddlemanHandlerDelegate<TResponse> next,
+        CancellationToken cancellationToken)
+    {
+        logger.LogInformation("Ejecutando {Request}", typeof(TRequest).Name);
+        var response = await next();
+        logger.LogInformation("Completado {Request}", typeof(TRequest).Name);
+        return response;
+    }
+}
+```
+
+- **Genéricos abiertos:** una clase como `LoggingBehavior<,>` se registra automáticamente y se aplica a todas las solicitudes.
+- **Específicos:** una clase cerrada (por ejemplo `IMiddlemanPipelineBehavior<CrearOrden, CrearOrdenResultado>`) se aplica solo a esa solicitud.
+- **Continuar o cortar:** llama a `await next()` para continuar; si no la llamas, el handler (y los behaviors internos) no se ejecuta y puedes devolver una respuesta o lanzar una excepción, por ejemplo en una validación.
+- **Orden:** los behaviors se ejecutan en el orden en que se registran en DI; el primero es el más externo. El escaneo automático no garantiza un orden entre ensamblados, así que no dependas de él cuando el orden importe.
+- **Ciclo de vida:** los behaviors detectados se registran como transitorios y pueden recibir dependencias por constructor.
+
+## Resolución de handlers y ciclo de vida
+
+- `IMiddlemanSender` se registra como **transitorio**.
+- Cada handler detectado se registra como **transitorio**.
+- El escaneo considera clases concretas no abstractas que implementan `IMiddlemanHandler<,>`.
+- Para cada envío, se resuelve el handler correspondiente del contenedor de dependencias y se invoca `Handle`.
+- Mantén un único handler para cada combinación de tipo de solicitud y tipo de respuesta para evitar resoluciones ambiguas.
+- Las dependencias del handler también deben estar registradas en DI si se inyectan por constructor.
+
+## Errores y recomendaciones
+
+- **No se encuentra el handler:** `Send` lanza `InvalidOperationException` si no existe un registro para la solicitud concreta y su respuesta. Comprueba que el handler implemente la pareja exacta de tipos genéricos, que su ensamblado esté cargado al ejecutar `AddMiddlemanConfig()` y que el registro se haya realizado en el contenedor utilizado por la aplicación.
+- **Falla `Handle`:** las excepciones producidas durante la ejecución del handler se propagan al llamador. Maneja errores de dominio o de infraestructura en la capa que corresponda; el paquete no los transforma en respuestas HTTP.
+- **No se resuelven dependencias:** registra en DI las dependencias requeridas por el handler y revisa que sus constructores sean activables por el contenedor.
+- **Tipado de la solicitud:** envía un objeto que implemente `IMiddlemanRequest<TResponse>` con el tipo de respuesta esperado. No cambies el tipo de respuesta al invocar el sender.
+- **Asincronía:** usa `await` o devuelve el `Task` del sender; evita bloquear la operación con `.Result` o `.Wait()`.
+
+## API pública
+
+### `IMiddlemanRequest<TResponse>`
+
+Marca una clase de solicitud e indica su tipo de respuesta. No define miembros.
+
+### `IMiddlemanHandler<TRequest, TResponse>`
+
+Define el método:
+
+```csharp
+Task<TResponse> Handle(TRequest request, CancellationToken cancellationToken);
+```
+
+Implementa la lógica de la solicitud en este método.
+
+### `IMiddlemanSender`
+
+Expone el método:
+
+```csharp
+Task<TResponse> Send<TResponse>(
+    IMiddlemanRequest<TResponse> request,
+    CancellationToken cancellationToken = default);
+```
+
+Úsalo para despachar solicitudes desde el resto de la aplicación.
+
+### `IMiddlemanPipelineBehavior<TRequest, TResponse>`
+
+```csharp
+Task<TResponse> Handle(
+    TRequest request,
+    MiddlemanHandlerDelegate<TResponse> next,
+    CancellationToken cancellationToken);
+```
+
+`MiddlemanHandlerDelegate<TResponse>` es `delegate Task<TResponse> MiddlemanHandlerDelegate<TResponse>()`.
+
+### `MiddlemanConfig.AddMiddlemanConfig(IServiceCollection)`
+
+Método de extensión que registra el sender, los handlers y los behaviors detectables en los ensamblados cargados.
+
+## Limitaciones conocidas
+
+La API actual ofrece despacho de una solicitud a un handler con una respuesta asíncrona. No incluye soporte integrado para:
+
+- Handlers de notificaciones con múltiples destinatarios.
+- Validación automática (puede implementarse como behavior).
+- Orden configurable de behaviors (se aplica el orden de registro).
+- Solicitudes sin tipo de respuesta, streaming o despacho por lotes.
+- Selección explícita de ensamblados o handlers en `AddMiddlemanConfig()`.

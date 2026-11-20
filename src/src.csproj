@@ -4,7 +4,7 @@
         <ImplicitUsings>enable</ImplicitUsings>
         <Nullable>enable</Nullable>
         <PackageId>QuantiveCorp.Framework.Middleman </PackageId>
-        <Version>1.1.0</Version>
+        <Version>2.0.0</Version>
         <Authors>KatanaSGC</Authors>
         <Description>This package is an implementation of the mediator pattern.</Description>
         <PackageLicenseExpression>MIT</PackageLicenseExpression>
