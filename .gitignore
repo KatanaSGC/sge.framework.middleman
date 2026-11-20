@@ -1,0 +1,44 @@
+# Test/sample project
+WebApplication1/
+
+# Build output
+[Bb]in/
+[Oo]bj/
+[Dd]ebug/
+[Rr]elease/
+*.nupkg
+*.snupkg
+artifacts/
+
+# NuGet
+*.nuget.props
+*.nuget.targets
+project.lock.json
+.nuget/
+
+# IDEs and user settings
+.idea/
+.vs/
+.vscode/
+*.user
+*.suo
+*.DotSettings.user
+launchSettings.json
+
+# Test results and coverage
+TestResults/
+coverage/
+*.trx
+*.coverage
+*.coveragexml
+
+# Logs and OS files
+*.log
+.DS_Store
+Thumbs.db
+
+# Secrets and local config
+*.pfx
+.env
+appsettings.Development.json
+secrets.json
